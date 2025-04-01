@@ -70,8 +70,8 @@ export default function SearchResults({ searchParams }: SearchResultsProps) {
         const apiParams: Record<string, string> = {
           page: currentPage.toString(),
           ...(searchParams.search_term && { search: searchParams.search_term }),
-          ...(searchParams.company && { company: searchParams.company }),
-          ...(searchParams.department && { department: searchParams.department }),
+          ...(searchParams.company && searchParams.company !== "all" && { company: searchParams.company }),
+          ...(searchParams.department && searchParams.department !== "all" && { department: searchParams.department }),
           ...(searchParams.position && { position: searchParams.position }),
           ...(searchParams.start_date && { start_date: searchParams.start_date }),
           ...(searchParams.end_date && { end_date: searchParams.end_date }),
@@ -111,8 +111,8 @@ export default function SearchResults({ searchParams }: SearchResultsProps) {
       // Convert search parameters to API format
       const apiParams: Record<string, string> = {
         ...(searchParams.search_term && { search: searchParams.search_term }),
-        ...(searchParams.company && { company: searchParams.company }),
-        ...(searchParams.department && { department: searchParams.department }),
+        ...(searchParams.company && searchParams.company !== "all" && { company: searchParams.company }),
+        ...(searchParams.department && searchParams.department !== "all" && { department: searchParams.department }),
         ...(searchParams.position && { position: searchParams.position }),
         ...(searchParams.start_date && { start_date: searchParams.start_date }),
         ...(searchParams.end_date && { end_date: searchParams.end_date }),

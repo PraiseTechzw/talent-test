@@ -27,8 +27,8 @@ interface SearchParams {
 export default function SearchPage() {
   const [searchParams, setSearchParams] = useState<SearchParams>({
     search_term: "",
-    company: "",
-    department: "",
+    company: "all",
+    department: "all",
     position: "",
     start_date: "",
     end_date: "",
@@ -102,8 +102,20 @@ export default function SearchPage() {
         description: "Your export is being prepared and will download shortly.",
       })
 
+      // Convert search parameters to API format
+      const apiParams: Record<string, string> = {
+        ...(searchParams.search_term && { search: searchParams.search_term }),
+        ...(searchParams.company && searchParams.company !== "all" && { company: searchParams.company }),
+        ...(searchParams.department && searchParams.department !== "all" && { department: searchParams.department }),
+        ...(searchParams.position && { position: searchParams.position }),
+        ...(searchParams.start_date && { start_date: searchParams.start_date }),
+        ...(searchParams.end_date && { end_date: searchParams.end_date }),
+        ...(searchParams.active_only && { is_active: "true" }),
+        ...(searchParams.former_only && { is_active: "false" }),
+      }
+
       // Call the export API
-      const response = await fetch(`/api/search/export?${new URLSearchParams(searchParams)}`)
+      const response = await fetch(`/api/search/export?${new URLSearchParams(apiParams)}`)
       const blob = await response.blob()
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -213,15 +225,15 @@ export default function SearchPage() {
                 <div className="space-y-2">
                   <Label>Start Date</Label>
                   <DatePicker
-                    value={searchParams.start_date}
-                    onChange={(date) => setSearchParams({ ...searchParams, start_date: date })}
+                    date={searchParams.start_date ? new Date(searchParams.start_date) : undefined}
+                    onDateChange={(date) => setSearchParams({ ...searchParams, start_date: date ? date.toISOString() : "" })}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label>End Date</Label>
                   <DatePicker
-                    value={searchParams.end_date}
-                    onChange={(date) => setSearchParams({ ...searchParams, end_date: date })}
+                    date={searchParams.end_date ? new Date(searchParams.end_date) : undefined}
+                    onDateChange={(date) => setSearchParams({ ...searchParams, end_date: date ? date.toISOString() : "" })}
                   />
                 </div>
               </div>
