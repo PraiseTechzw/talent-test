@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { User } from "lucide-react"
+import { User, Building2, Calendar } from "lucide-react"
 import { useAuth } from "@/lib/hooks/use-auth"
 import { employeesApi } from "@/lib/api"
+import { cn } from "@/lib/utils"
 
 interface Employee {
   id: number
@@ -22,7 +23,6 @@ export function RecentEmployees() {
 
   useEffect(() => {
     const fetchEmployees = async () => {
-      // Don't fetch if still loading or not authenticated
       if (isLoading || !isAuthenticated) {
         return
       }
@@ -38,18 +38,17 @@ export function RecentEmployees() {
     fetchEmployees()
   }, [isAuthenticated, isLoading])
 
-  // Show loading state while checking authentication
   if (isLoading) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Employees</CardTitle>
+      <Card className="border-none shadow-lg">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-xl font-semibold">Recent Employees</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {[...Array(5)].map((_, i) => (
               <div key={i} className="flex items-center space-x-4">
-                <div className="h-8 w-8 animate-pulse rounded bg-muted" />
+                <div className="h-10 w-10 animate-pulse rounded-full bg-muted" />
                 <div className="flex-1 space-y-2">
                   <div className="h-4 w-24 animate-pulse rounded bg-muted" />
                   <div className="h-3 w-16 animate-pulse rounded bg-muted" />
@@ -62,51 +61,65 @@ export function RecentEmployees() {
     )
   }
 
-  // Show error state if not authenticated
   if (!isAuthenticated) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Employees</CardTitle>
+      <Card className="border-none shadow-lg">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-xl font-semibold">Recent Employees</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">Please log in to view employees</p>
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <User className="h-12 w-12 text-muted-foreground mb-4" />
+            <p className="text-sm text-muted-foreground">Please log in to view employees</p>
+          </div>
         </CardContent>
       </Card>
     )
   }
 
-  // Show error state if API call failed
   if (error) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Employees</CardTitle>
+      <Card className="border-none shadow-lg">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-xl font-semibold">Recent Employees</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">{error}</p>
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <User className="h-12 w-12 text-destructive mb-4" />
+            <p className="text-sm text-muted-foreground">{error}</p>
+          </div>
         </CardContent>
       </Card>
     )
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Recent Employees</CardTitle>
+    <Card className="border-none shadow-lg">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-xl font-semibold">Recent Employees</CardTitle>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-[300px]">
-          <div className="space-y-4">
+        <ScrollArea className="h-[300px] pr-4">
+          <div className="space-y-6">
             {employees.map((employee) => (
-              <div key={employee.id} className="flex items-center space-x-4">
-                <User className="h-8 w-8 text-muted-foreground" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium">{employee.name}</p>
-                  <p className="text-xs text-muted-foreground">{employee.position}</p>
+              <div key={employee.id} className="flex items-start space-x-4">
+                <div className="p-2 rounded-full bg-green-100 dark:bg-green-900">
+                  <User className="h-5 w-5 text-green-600 dark:text-green-400" />
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  {new Date(employee.start_date).toLocaleDateString()}
+                <div className="flex-1 space-y-1">
+                  <p className="text-sm font-medium leading-none">{employee.name}</p>
+                  <div className="flex items-center text-xs text-muted-foreground">
+                    <Building2 className="mr-1 h-3 w-3" />
+                    {employee.company}
+                  </div>
+                  <div className="flex items-center text-xs text-muted-foreground">
+                    <Calendar className="mr-1 h-3 w-3" />
+                    Started {new Date(employee.start_date).toLocaleDateString(undefined, {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    })}
+                  </div>
                 </div>
               </div>
             ))}
