@@ -6,6 +6,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0.0-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.17-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
 [![React](https://img.shields.io/badge/React-19.0.0-61DAFB?logo=react)](https://reactjs.org/)
+[![Django](https://img.shields.io/badge/Django-5.0.0-green?logo=django)](https://www.djangoproject.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 A modern, secure, and efficient platform for verifying employment records and managing talent data.
@@ -74,18 +75,29 @@ A modern, secure, and efficient platform for verifying employment records and ma
 
 | Frontend | Backend | Styling | Tools |
 |----------|---------|---------|-------|
-| Next.js 15.2.4 | TypeScript | Tailwind CSS 3.4.17 | Git |
-| React 19 | JWT Auth | Shadcn/ui | pnpm |
-| TypeScript 5 | REST API | Radix UI | VS Code |
+| Next.js 15.2.4 | Django 5.0 | Tailwind CSS 3.4.17 | Git |
+| React 19 | Django REST | Shadcn/ui | pnpm |
+| TypeScript 5 | JWT Auth | Radix UI | VS Code |
 
 </div>
 
 ### Core Technologies
-- **Framework:** Next.js 15.2.4 with App Router
-- **Language:** TypeScript 5
+- **Frontend Framework:** Next.js 15.2.4 with App Router
+- **Backend Framework:** Django 5.0 with Django REST Framework
+- **Language:** TypeScript 5 (Frontend), Python 3.x (Backend)
 - **UI Library:** React 19
 - **Styling:** Tailwind CSS 3.4.17
-- **Package Manager:** pnpm
+- **Package Manager:** pnpm (Frontend), pip (Backend)
+
+### Backend Technologies
+- **Framework:** Django 5.0
+- **API Framework:** Django REST Framework
+- **Authentication:** JWT with Django REST Framework
+- **Database:** PostgreSQL
+- **ORM:** Django ORM
+- **API Documentation:** Django REST Swagger/OpenAPI
+- **CORS:** django-cors-headers
+- **Environment Variables:** python-dotenv
 
 ### UI Components & Libraries
 - **Component Library:** Shadcn/ui
@@ -104,23 +116,32 @@ A modern, secure, and efficient platform for verifying employment records and ma
 
 ```
 talent-verification/
-├── app/                    # Next.js app directory
-│   ├── (auth)/            # Authentication routes
-│   ├── (dashboard)/       # Dashboard routes
-│   └── api/               # API routes
-├── components/            # React components
-│   ├── ui/               # Reusable UI components
-│   ├── forms/            # Form components
-│   └── dashboard/        # Dashboard-specific components
-├── lib/                   # Utility functions and API clients
-│   ├── api.ts           # API client functions
-│   └── utils.ts         # Utility functions
-├── hooks/                # Custom React hooks
-├── styles/               # Global styles
-├── public/              # Static assets
-│   └── screenshots/     # Application screenshots
-├── types/               # TypeScript type definitions
-└── backend/             # Backend API implementation
+├── frontend/              # Next.js frontend application
+│   ├── app/              # Next.js app directory
+│   │   ├── (auth)/      # Authentication routes
+│   │   ├── (dashboard)/ # Dashboard routes
+│   │   └── api/         # API routes
+│   ├── components/      # React components
+│   │   ├── ui/         # Reusable UI components
+│   │   ├── forms/      # Form components
+│   │   └── dashboard/  # Dashboard-specific components
+│   ├── lib/            # Utility functions and API clients
+│   │   ├── api.ts     # API client functions
+│   │   └── utils.ts   # Utility functions
+│   ├── hooks/         # Custom React hooks
+│   ├── styles/        # Global styles
+│   ├── public/        # Static assets
+│   │   └── screenshots/ # Application screenshots
+│   └── types/         # TypeScript type definitions
+│
+└── backend/           # Django backend application
+    ├── core/         # Core Django settings
+    ├── api/          # API endpoints and views
+    ├── models/       # Django models
+    ├── serializers/  # DRF serializers
+    ├── permissions/  # Custom permissions
+    ├── utils/        # Utility functions
+    └── tests/        # Test cases
 ```
 
 ## 🚀 Getting Started
@@ -128,8 +149,10 @@ talent-verification/
 ### Prerequisites
 
 - ⚡ Node.js 18.x or later
+- 🐍 Python 3.x
 - 📦 pnpm (recommended) or npm
 - 🔧 Git
+- 🗄️ PostgreSQL
 
 ### Installation
 
@@ -139,23 +162,45 @@ git clone https://github.com/yourusername/talent-verification.git
 cd talent-verification
 ```
 
-2. **Install dependencies:**
+2. **Set up the backend:**
 ```bash
+cd backend
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
+
+3. **Set up the frontend:**
+```bash
+cd frontend
 pnpm install
 ```
 
-3. **Set up environment variables:**
+4. **Set up environment variables:**
 ```bash
-cp .env.example .env.local
-```
-Edit `.env.local` with your configuration values.
+# Backend (.env)
+cp backend/.env.example backend/.env
 
-4. **Run the development server:**
+# Frontend (.env.local)
+cp frontend/.env.example frontend/.env.local
+```
+Edit both `.env` files with your configuration values.
+
+5. **Run the development servers:**
 ```bash
+# Terminal 1 - Backend
+cd backend
+python manage.py runserver
+
+# Terminal 2 - Frontend
+cd frontend
 pnpm dev
 ```
 
-5. **Open [http://localhost:3000](http://localhost:3000) in your browser.**
+6. **Open [http://localhost:3000](http://localhost:3000) in your browser.**
 
 ## 🔌 API Endpoints
 
@@ -206,10 +251,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 
-| Framework | UI Components | Styling | Tools |
-|-----------|---------------|---------|-------|
-| [Next.js](https://nextjs.org/) | [Shadcn/ui](https://ui.shadcn.com/) | [Tailwind CSS](https://tailwindcss.com/) | [pnpm](https://pnpm.io/) |
-| [React](https://reactjs.org/) | [Radix UI](https://www.radix-ui.com/) | [Lucide Icons](https://lucide.dev/) | [TypeScript](https://www.typescriptlang.org/) |
+| Framework | Backend | UI Components | Styling | Tools |
+|-----------|---------|---------------|---------|-------|
+| [Next.js](https://nextjs.org/) | [Django](https://www.djangoproject.com/) | [Shadcn/ui](https://ui.shadcn.com/) | [Tailwind CSS](https://tailwindcss.com/) | [pnpm](https://pnpm.io/) |
+| [React](https://reactjs.org/) | [Django REST](https://www.django-rest-framework.org/) | [Radix UI](https://www.radix-ui.com/) | [Lucide Icons](https://lucide.dev/) | [TypeScript](https://www.typescriptlang.org/) |
 
 </div>
 
