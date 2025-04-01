@@ -2,9 +2,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Building, Download, Filter, Plus, Search, Upload } from "lucide-react"
+import { Building, Download, Filter, Plus, Search } from "lucide-react"
 import CompanyList from "@/components/company-list"
 import CompanyForm from "@/components/company-form"
+import CompanyUpload from "@/components/company-upload"
 
 export default function CompaniesPage() {
   return (
@@ -17,9 +18,6 @@ export default function CompaniesPage() {
         <div className="flex space-x-3">
           <Button>
             <Plus className="mr-2 h-4 w-4" /> Add Company
-          </Button>
-          <Button variant="outline">
-            <Upload className="mr-2 h-4 w-4" /> Import
           </Button>
           <Button variant="outline">
             <Download className="mr-2 h-4 w-4" /> Export
@@ -75,29 +73,7 @@ export default function CompaniesPage() {
               <CardTitle>Bulk Upload Companies</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-8 text-center">
-                <Upload className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                <h3 className="text-lg font-medium mb-2">Drop your file here or click to browse</h3>
-                <p className="text-gray-500 dark:text-gray-400 mb-4">Supported formats: CSV, Excel (.xlsx)</p>
-                <Button>Select File</Button>
-                <div className="mt-4 text-sm text-gray-500">
-                  <a href="#" className="text-primary hover:underline">
-                    Download template
-                  </a>{" "}
-                  for the correct format
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <h3 className="text-lg font-medium mb-3">Upload Instructions</h3>
-                <ul className="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300">
-                  <li>Ensure all required fields are filled in the template</li>
-                  <li>Company names must be unique</li>
-                  <li>Registration numbers must be valid and unique</li>
-                  <li>Department lists should be comma-separated</li>
-                  <li>Maximum file size: 10MB</li>
-                </ul>
-              </div>
+              <CompanyUpload />
             </CardContent>
           </Card>
         </TabsContent>

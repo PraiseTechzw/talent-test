@@ -26,22 +26,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    // Check if user is already logged in
+  const checkAuth = async () => {
     const token = localStorage.getItem("token")
+    const refreshToken = localStorage.getItem("refresh_token")
     const userData = localStorage.getItem("user")
 
     if (token && userData) {
       try {
+        // Check if token is expired
+        const tokenData = JSON.parse(atob(token.split('.')[1]))
+        const isExpired = tokenData.exp * 1000 < Date.now()
+
+        if (isExpired && refreshToken) {
+          try {
+            const data = await authApi.refreshToken(refreshToken)
+            localStorage.setItem("token", data.access)
+            if (data.refresh) {
+              localStorage.setItem("refresh_token", data.refresh)
+            }
+          } catch (err) {
+            // If refresh fails, log out
+            logout()
+            return
+          }
+        }
+
         setUser(JSON.parse(userData))
       } catch (e) {
-        // Invalid user data in localStorage
-        localStorage.removeItem("user")
-        localStorage.removeItem("token")
+        // Invalid token or user data
+        logout()
       }
     }
 
     setIsLoading(false)
+  }
+
+  useEffect(() => {
+    checkAuth()
   }, [])
 
   const login = async (username: string, password: string) => {

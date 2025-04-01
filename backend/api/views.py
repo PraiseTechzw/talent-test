@@ -17,6 +17,7 @@ from .permissions import IsAdminUser, IsCompanyManagerOrReadOnly, IsHRStaffOrRea
 import csv
 import io
 import pandas as pd
+from rest_framework.authtoken.models import Token
 
 class CompanyViewSet(viewsets.ModelViewSet):
     queryset = Company.objects.all()
@@ -200,9 +201,30 @@ class RegisterView(APIView):
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            user = serializer.save()
+            # Create token for the new user
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({
+                'token': token.key,
+                'user': {
+                    'id': user.id,
+                    'username': user.username,
+                    'email': user.email,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name
+                }
+            }, status=status.HTTP_201_CREATED)
+        # Return detailed error messages
+        error_messages = {}
+        for field, errors in serializer.errors.items():
+            if isinstance(errors, list):
+                error_messages[field] = errors[0]
+            else:
+                error_messages[field] = str(errors)
+        return Response({
+            'detail': 'Registration failed',
+            'errors': error_messages
+        }, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SearchView(APIView):

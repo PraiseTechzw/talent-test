@@ -1,9 +1,14 @@
+"use client"
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowRight, Building, Search, Shield, Users } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export default function Home() {
+  const router = useRouter()
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <header className="bg-white dark:bg-gray-950 shadow-sm">
@@ -39,8 +44,8 @@ export default function Home() {
             </Link>
           </nav>
           <div className="flex space-x-3">
-            <Button variant="outline">Log In</Button>
-            <Button>Sign Up</Button>
+            <Button onClick={() => router.push('/login')} variant="outline">Log In</Button>
+            <Button onClick={() => router.push('/register')}>Sign Up</Button>
           </div>
         </div>
       </header>
@@ -53,10 +58,10 @@ export default function Home() {
             verification system.
           </p>
           <div className="flex justify-center space-x-4">
-            <Button size="lg" className="px-6">
+            <Button size="lg" className="px-6" onClick={() => router.push('/register')}>
               Get Started <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
-            <Button size="lg" variant="outline" className="px-6">
+            <Button size="lg" variant="outline" className="px-6" onClick={() => router.push('/documentation')}>
               Learn More
             </Button>
           </div>
@@ -78,7 +83,7 @@ export default function Home() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full" onClick={() => router.push('/companies')}>
                 Explore Company Features
               </Button>
             </CardFooter>
@@ -99,7 +104,7 @@ export default function Home() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full" onClick={() => router.push('/employees')}>
                 Explore Employee Features
               </Button>
             </CardFooter>
@@ -120,7 +125,7 @@ export default function Home() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full" onClick={() => router.push('/search')}>
                 Try Search Features
               </Button>
             </CardFooter>

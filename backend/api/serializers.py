@@ -92,6 +92,15 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
         user.set_password(validated_data['password'])
         user.save()
+
+        # Create UserProfile with admin role for the first user
+        # For subsequent users, set as company_manager
+        is_first_user = User.objects.count() == 1
+        UserProfile.objects.create(
+            user=user,
+            role='admin' if is_first_user else 'company_manager'
+        )
+
         return user
 
 

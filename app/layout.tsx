@@ -12,7 +12,13 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <ToastProvider>
+              <Toast />
+              {children}
+            </ToastProvider>
+           </AuthProvider>
+
         </ThemeProvider>
       </body>
     </html>
@@ -22,6 +28,7 @@ export default function RootLayout({
 
 
 import './globals.css'
+import { Toast, ToastProvider } from "@/components/ui/toast"
 
 export const metadata = {
       generator: 'v0.dev'
