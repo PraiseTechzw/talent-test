@@ -190,9 +190,11 @@ export default function Home() {
               <h3 className="text-lg font-semibold mb-4">Contact</h3>
               <ul className="space-y-2 text-gray-400">
                 <li>info@talentverify.com</li>
-                <li>+1 (555) 123-4567</li>
-                <li>123 Verification St, Suite 100</li>
-                <li>San Francisco, CA 94103</li>
+                <li>+263 77 123 4567</li>
+                <li>123 Samora Machel Avenue</li>
+                <li>Harare, Zimbabwe</li>
+                <li>Praise Masunga</li>
+                <li>Chinhoyi, Zimbabwe</li>
               </ul>
             </div>
           </div>

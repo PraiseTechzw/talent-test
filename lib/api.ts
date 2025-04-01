@@ -271,12 +271,25 @@ export const employeesApi = {
 
 // Search API
 export const searchApi = {
-  search: async (searchParams: any) => {
-    const queryParams = new URLSearchParams(searchParams)
+  search: async (params: Record<string, string>) => {
+    const queryParams = new URLSearchParams(params)
+    const response = await handleApiRequest(
+      `${API_BASE_URL}/search/?${queryParams}`,
+      {
+        headers: getAuthHeaders(),
+      }
+    )
+    return handleResponse(response)
+  },
 
-    const response = await handleApiRequest(`${API_BASE_URL}/search/?${queryParams}`, {
-      headers: getAuthHeaders(),
-    })
+  exportResults: async (params: Record<string, string>) => {
+    const queryParams = new URLSearchParams(params)
+    const response = await handleApiRequest(
+      `${API_BASE_URL}/search/export/?${queryParams}`,
+      {
+        headers: getAuthHeaders(),
+      }
+    )
     return handleResponse(response)
   },
 }

@@ -15,6 +15,7 @@ import {
 import { Eye, FileText, Download } from "lucide-react"
 import { searchApi } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
+import { useAuth } from "@/lib/hooks/use-auth"
 
 interface SearchResult {
   id: string
@@ -29,21 +30,34 @@ interface SearchResult {
   is_active: boolean
 }
 
+interface SearchParams {
+  search_term: string
+  company: string
+  department: string
+  position: string
+  start_date: string
+  end_date: string
+  active_only: boolean
+  former_only: boolean
+}
+
 interface SearchResultsProps {
-  searchParams: Record<string, string>
+  searchParams: SearchParams
 }
 
 export default function SearchResults({ searchParams }: SearchResultsProps) {
   const [results, setResults] = useState<SearchResult[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const { toast } = useToast()
+  const { isAuthenticated } = useAuth()
 
   useEffect(() => {
     const fetchResults = async () => {
-      if (Object.keys(searchParams).length === 0) {
+      // Don't fetch if not authenticated or no search parameters
+      if (!isAuthenticated || Object.values(searchParams).every(value => !value)) {
         setIsLoading(false)
         return
       }
@@ -52,10 +66,20 @@ export default function SearchResults({ searchParams }: SearchResultsProps) {
       setError(null)
 
       try {
-        const response = await searchApi.search({
-          ...searchParams,
+        // Convert search parameters to API format
+        const apiParams: Record<string, string> = {
           page: currentPage.toString(),
-        })
+          ...(searchParams.search_term && { search: searchParams.search_term }),
+          ...(searchParams.company && { company: searchParams.company }),
+          ...(searchParams.department && { department: searchParams.department }),
+          ...(searchParams.position && { position: searchParams.position }),
+          ...(searchParams.start_date && { start_date: searchParams.start_date }),
+          ...(searchParams.end_date && { end_date: searchParams.end_date }),
+          ...(searchParams.active_only && { is_active: "true" }),
+          ...(searchParams.former_only && { is_active: "false" }),
+        }
+
+        const response = await searchApi.search(apiParams)
         setResults(response.results)
         setTotalPages(Math.ceil(response.count / 10)) // Assuming 10 items per page
       } catch (err) {
@@ -71,7 +95,7 @@ export default function SearchResults({ searchParams }: SearchResultsProps) {
     }
 
     fetchResults()
-  }, [currentPage, searchParams, toast])
+  }, [currentPage, searchParams, toast, isAuthenticated])
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
@@ -79,19 +103,38 @@ export default function SearchResults({ searchParams }: SearchResultsProps) {
 
   const handleExport = async () => {
     try {
-      // In a real app, this would call an API endpoint to generate and download a CSV/Excel file
       toast({
         title: "Export Started",
         description: "Your export is being prepared and will download shortly.",
       })
 
-      // Simulate download delay
-      setTimeout(() => {
-        toast({
-          title: "Export Complete",
-          description: "Your export has been downloaded.",
-        })
-      }, 2000)
+      // Convert search parameters to API format
+      const apiParams: Record<string, string> = {
+        ...(searchParams.search_term && { search: searchParams.search_term }),
+        ...(searchParams.company && { company: searchParams.company }),
+        ...(searchParams.department && { department: searchParams.department }),
+        ...(searchParams.position && { position: searchParams.position }),
+        ...(searchParams.start_date && { start_date: searchParams.start_date }),
+        ...(searchParams.end_date && { end_date: searchParams.end_date }),
+        ...(searchParams.active_only && { is_active: "true" }),
+        ...(searchParams.former_only && { is_active: "false" }),
+      }
+
+      const response = await searchApi.exportResults(apiParams)
+      const blob = new Blob([response], { type: 'text/csv' })
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'search-results.csv'
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+
+      toast({
+        title: "Export Complete",
+        description: "Your export has been downloaded.",
+      })
     } catch (err) {
       toast({
         title: "Export Failed",
@@ -101,18 +144,42 @@ export default function SearchResults({ searchParams }: SearchResultsProps) {
     }
   }
 
+  if (!isAuthenticated) {
+    return (
+      <div className="text-center py-8">
+        <FileText className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+        <h3 className="text-lg font-medium mb-2">Please log in</h3>
+        <p className="text-gray-500 dark:text-gray-400">You need to be logged in to view search results.</p>
+      </div>
+    )
+  }
+
   if (isLoading) {
-    return null
+    return (
+      <div className="space-y-4">
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="flex items-center space-x-4">
+            <div className="h-10 w-10 animate-pulse rounded-full bg-muted" />
+            <div className="flex-1 space-y-2">
+              <div className="h-4 w-24 animate-pulse rounded bg-muted" />
+              <div className="h-3 w-16 animate-pulse rounded bg-muted" />
+            </div>
+          </div>
+        ))}
+      </div>
+    )
   }
 
   if (error) {
     return (
       <div className="text-center py-8">
-        <p className="text-destructive">Error: {error}</p>
+        <FileText className="h-12 w-12 mx-auto text-destructive mb-4" />
+        <h3 className="text-lg font-medium mb-2">Error</h3>
+        <p className="text-gray-500 dark:text-gray-400">{error}</p>
         <Button
           variant="outline"
           className="mt-4"
-          onClick={() => setIsLoading(true)} // This will trigger a re-fetch
+          onClick={() => setIsLoading(true)}
         >
           Try Again
         </Button>
@@ -120,7 +187,7 @@ export default function SearchResults({ searchParams }: SearchResultsProps) {
     )
   }
 
-  if (Object.keys(searchParams).length === 0) {
+  if (Object.values(searchParams).every(value => !value)) {
     return (
       <div className="text-center py-8">
         <FileText className="h-12 w-12 mx-auto text-gray-400 mb-4" />
@@ -187,7 +254,7 @@ export default function SearchResults({ searchParams }: SearchResultsProps) {
                   )}
                 </TableCell>
                 <TableCell>
-                  {result.start_date} - {result.end_date || "Present"}
+                  {new Date(result.start_date).toLocaleDateString()} - {result.end_date ? new Date(result.end_date).toLocaleDateString() : "Present"}
                 </TableCell>
                 <TableCell className="text-right">
                   <Button variant="ghost" size="sm">
