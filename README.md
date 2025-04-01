@@ -1,98 +1,123 @@
-# Talent Verification System
+# 🎯 Talent Verification System
 
-A modern, secure, and efficient platform for verifying employment records and managing talent data. Built with Next.js, TypeScript, and Tailwind CSS.
+<div align="center">
 
-![Landing Page](public/screenshots/landing_page.png)
-*Landing Page - Modern and intuitive interface*
+[![Next.js](https://img.shields.io/badge/Next.js-14.0.0-black?logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0.0-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.3.0-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-![Dashboard](public/screenshots/dashboard.png)
-*Dashboard - Comprehensive overview of key metrics and recent activities*
+A modern, secure, and efficient platform for verifying employment records and managing talent data.
 
-## Features
+[Features](#features) • [Tech Stack](#tech-stack) • [Getting Started](#getting-started)
+
+</div>
+
+## 📸 Preview
+
+<div align="center">
+  <img src="public/screenshots/landing_page.png" alt="Landing Page" width="800" />
+  <p><em>Modern and intuitive landing page interface</em></p>
+  
+  <img src="public/screenshots/dashboard.png" alt="Dashboard" width="800" />
+  <p><em>Comprehensive dashboard with real-time metrics</em></p>
+</div>
+
+## ✨ Features
+
+<div align="center">
+
+| 🔐 Authentication | 📊 Dashboard | 🔍 Search | 👥 Management |
+|------------------|-------------|-----------|--------------|
+| JWT Authentication | Real-time Metrics | Multi-criteria Search | Employee Profiles |
+| Protected Routes | Performance KPIs | Advanced Filters | Company Management |
+| Role-based Access | Activity Tracking | Date Range Filter | Document Handling |
+
+</div>
 
 ### 🔐 Authentication & Security
-- Secure login system with JWT authentication
-- Protected routes and API endpoints
-- Role-based access control
-- Session management with refresh tokens
+- 🔑 Secure login system with JWT authentication
+- 🛡️ Protected routes and API endpoints
+- 👥 Role-based access control
+- 🔄 Session management with refresh tokens
 
 ### 📊 Dashboard
-- Real-time metrics and analytics
-- Key performance indicators
-- Recent activities tracking
-- Top companies overview
-- Employee statistics
+- 📈 Real-time metrics and analytics
+- 🎯 Key performance indicators
+- 📝 Recent activities tracking
+- 🏢 Top companies overview
+- 👥 Employee statistics
 
 ### 🔍 Advanced Search
-- Multi-criteria search functionality
-- Filter by company, department, and position
-- Date range filtering
-- Employment status filtering
-- Export results to CSV
+- 🔎 Multi-criteria search functionality
+- 🏢 Filter by company, department, and position
+- 📅 Date range filtering
+- 👤 Employment status filtering
+- 📥 Export results to CSV
 
 ### 👥 Employee Management
-- Comprehensive employee profiles
-- Employment history tracking
-- Status verification
-- Document management
+- 👤 Comprehensive employee profiles
+- 📋 Employment history tracking
+- ✅ Status verification
+- 📄 Document management
 
 ### 🏢 Company Management
-- Company profiles and details
-- Employee count tracking
-- Registration number verification
-- Department management
+- 🏢 Company profiles and details
+- 👥 Employee count tracking
+- 🔢 Registration number verification
+- 🏢 Department management
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-- **Frontend Framework:** Next.js 14 with App Router
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS
-- **UI Components:** Shadcn/ui
-- **State Management:** React Hooks
-- **Authentication:** JWT with refresh tokens
-- **API:** RESTful with TypeScript types
-- **Date Handling:** date-fns
-- **Icons:** Lucide React
+<div align="center">
 
-## Getting Started
+| Frontend | Backend | Styling | Tools |
+|----------|---------|---------|-------|
+| Next.js 14 | TypeScript | Tailwind CSS | Git |
+| React Hooks | JWT Auth | Shadcn/ui | npm/yarn |
+| TypeScript | REST API | Lucide Icons | VS Code |
+
+</div>
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js 18.x or later
-- npm or yarn
-- Git
+- ⚡ Node.js 18.x or later
+- 📦 npm or yarn
+- 🔧 Git
 
 ### Installation
 
-1. Clone the repository:
+1. **Clone the repository:**
 ```bash
 git clone https://github.com/yourusername/talent-verification.git
 cd talent-verification
 ```
 
-2. Install dependencies:
+2. **Install dependencies:**
 ```bash
 npm install
 # or
 yarn install
 ```
 
-3. Set up environment variables:
+3. **Set up environment variables:**
 ```bash
 cp .env.example .env.local
 ```
 Edit `.env.local` with your configuration values.
 
-4. Run the development server:
+4. **Run the development server:**
 ```bash
 npm run dev
 # or
 yarn dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+5. **Open [http://localhost:3000](http://localhost:3000) in your browser.**
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 talent-verification/
@@ -108,46 +133,65 @@ talent-verification/
 └── types/                # TypeScript type definitions
 ```
 
-## API Endpoints
+## 🔌 API Endpoints
 
 ### Authentication
-- `POST /api/auth/login` - User login
-- `POST /api/auth/logout` - User logout
-- `POST /api/auth/refresh` - Refresh access token
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/login` | User login |
+| POST | `/api/auth/logout` | User logout |
+| POST | `/api/auth/refresh` | Refresh access token |
 
 ### Companies
-- `GET /api/companies` - List all companies
-- `GET /api/companies/:id` - Get company details
-- `POST /api/companies` - Create new company
-- `PUT /api/companies/:id` - Update company
-- `DELETE /api/companies/:id` - Delete company
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/companies` | List all companies |
+| GET | `/api/companies/:id` | Get company details |
+| POST | `/api/companies` | Create new company |
+| PUT | `/api/companies/:id` | Update company |
+| DELETE | `/api/companies/:id` | Delete company |
 
 ### Employees
-- `GET /api/employees` - List all employees
-- `GET /api/employees/:id` - Get employee details
-- `POST /api/employees` - Create new employee
-- `PUT /api/employees/:id` - Update employee
-- `DELETE /api/employees/:id` - Delete employee
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/employees` | List all employees |
+| GET | `/api/employees/:id` | Get employee details |
+| POST | `/api/employees` | Create new employee |
+| PUT | `/api/employees/:id` | Update employee |
+| DELETE | `/api/employees/:id` | Delete employee |
 
 ### Search
-- `GET /api/search` - Search employees
-- `GET /api/search/export` - Export search results
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/search` | Search employees |
+| GET | `/api/search/export` | Export search results |
 
-## Contributing
+## 🤝 Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+1. 🍴 Fork the repository
+2. 🌿 Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. 💾 Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. 📤 Push to the branch (`git push origin feature/amazing-feature`)
+5. 🔄 Open a Pull Request
 
-## License
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Acknowledgments
+## 🙏 Acknowledgments
 
-- [Next.js](https://nextjs.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Shadcn/ui](https://ui.shadcn.com/)
-- [Lucide Icons](https://lucide.dev/)
+<div align="center">
+
+| Framework | Styling | UI Components | Icons |
+|-----------|---------|---------------|-------|
+| [Next.js](https://nextjs.org/) | [Tailwind CSS](https://tailwindcss.com/) | [Shadcn/ui](https://ui.shadcn.com/) | [Lucide Icons](https://lucide.dev/) |
+
+</div>
+
+---
+
+<div align="center">
+  
+Made with ❤️ by [Your Name]
+
+</div>
