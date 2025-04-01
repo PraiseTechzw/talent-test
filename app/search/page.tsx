@@ -170,7 +170,7 @@ export default function SearchPage() {
                     <SelectValue placeholder="Select company" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Companies</SelectItem>
+                    <SelectItem value="all">All Companies</SelectItem>
                     {companies.map((company) => (
                       <SelectItem key={company.id} value={company.id}>
                         {company.name}
@@ -190,7 +190,7 @@ export default function SearchPage() {
                     <SelectValue placeholder="Select department" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Departments</SelectItem>
+                    <SelectItem value="all">All Departments</SelectItem>
                     <SelectItem value="engineering">Engineering</SelectItem>
                     <SelectItem value="hr">Human Resources</SelectItem>
                     <SelectItem value="sales">Sales</SelectItem>
