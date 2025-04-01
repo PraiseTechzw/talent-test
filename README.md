@@ -2,9 +2,10 @@
 
 <div align="center">
 
-[![Next.js](https://img.shields.io/badge/Next.js-14.0.0-black?logo=next.js)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-15.2.4-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0.0-blue?logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.3.0-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.17-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
+[![React](https://img.shields.io/badge/React-19.0.0-61DAFB?logo=react)](https://reactjs.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 A modern, secure, and efficient platform for verifying employment records and managing talent data.
@@ -73,18 +74,61 @@ A modern, secure, and efficient platform for verifying employment records and ma
 
 | Frontend | Backend | Styling | Tools |
 |----------|---------|---------|-------|
-| Next.js 14 | TypeScript | Tailwind CSS | Git |
-| React Hooks | JWT Auth | Shadcn/ui | npm/yarn |
-| TypeScript | REST API | Lucide Icons | VS Code |
+| Next.js 15.2.4 | TypeScript | Tailwind CSS 3.4.17 | Git |
+| React 19 | JWT Auth | Shadcn/ui | pnpm |
+| TypeScript 5 | REST API | Radix UI | VS Code |
 
 </div>
+
+### Core Technologies
+- **Framework:** Next.js 15.2.4 with App Router
+- **Language:** TypeScript 5
+- **UI Library:** React 19
+- **Styling:** Tailwind CSS 3.4.17
+- **Package Manager:** pnpm
+
+### UI Components & Libraries
+- **Component Library:** Shadcn/ui
+- **Primitive Components:** Radix UI
+- **Icons:** Lucide React
+- **Charts:** Recharts
+- **Forms:** React Hook Form with Zod validation
+- **Date Handling:** date-fns
+- **Date Picker:** react-day-picker
+- **File Upload:** react-dropzone
+- **Animations:** tailwindcss-animate
+- **Theming:** next-themes
+- **Toast Notifications:** sonner
+
+## 📁 Project Structure
+
+```
+talent-verification/
+├── app/                    # Next.js app directory
+│   ├── (auth)/            # Authentication routes
+│   ├── (dashboard)/       # Dashboard routes
+│   └── api/               # API routes
+├── components/            # React components
+│   ├── ui/               # Reusable UI components
+│   ├── forms/            # Form components
+│   └── dashboard/        # Dashboard-specific components
+├── lib/                   # Utility functions and API clients
+│   ├── api.ts           # API client functions
+│   └── utils.ts         # Utility functions
+├── hooks/                # Custom React hooks
+├── styles/               # Global styles
+├── public/              # Static assets
+│   └── screenshots/     # Application screenshots
+├── types/               # TypeScript type definitions
+└── backend/             # Backend API implementation
+```
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
 - ⚡ Node.js 18.x or later
-- 📦 npm or yarn
+- 📦 pnpm (recommended) or npm
 - 🔧 Git
 
 ### Installation
@@ -97,9 +141,7 @@ cd talent-verification
 
 2. **Install dependencies:**
 ```bash
-npm install
-# or
-yarn install
+pnpm install
 ```
 
 3. **Set up environment variables:**
@@ -110,28 +152,10 @@ Edit `.env.local` with your configuration values.
 
 4. **Run the development server:**
 ```bash
-npm run dev
-# or
-yarn dev
+pnpm dev
 ```
 
 5. **Open [http://localhost:3000](http://localhost:3000) in your browser.**
-
-## 📁 Project Structure
-
-```
-talent-verification/
-├── app/                    # Next.js app directory
-│   ├── (auth)/            # Authentication routes
-│   ├── (dashboard)/       # Dashboard routes
-│   └── api/               # API routes
-├── components/            # React components
-├── lib/                   # Utility functions and API clients
-├── public/               # Static assets
-│   └── screenshots/      # Application screenshots
-├── styles/               # Global styles
-└── types/                # TypeScript type definitions
-```
 
 ## 🔌 API Endpoints
 
@@ -182,9 +206,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 
-| Framework | Styling | UI Components | Icons |
-|-----------|---------|---------------|-------|
-| [Next.js](https://nextjs.org/) | [Tailwind CSS](https://tailwindcss.com/) | [Shadcn/ui](https://ui.shadcn.com/) | [Lucide Icons](https://lucide.dev/) |
+| Framework | UI Components | Styling | Tools |
+|-----------|---------------|---------|-------|
+| [Next.js](https://nextjs.org/) | [Shadcn/ui](https://ui.shadcn.com/) | [Tailwind CSS](https://tailwindcss.com/) | [pnpm](https://pnpm.io/) |
+| [React](https://reactjs.org/) | [Radix UI](https://www.radix-ui.com/) | [Lucide Icons](https://lucide.dev/) | [TypeScript](https://www.typescriptlang.org/) |
 
 </div>
 
@@ -192,6 +217,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
   
-Made with ❤️ by [Your Name]
+Made with ❤️ by Praise Masunga
 
 </div>
