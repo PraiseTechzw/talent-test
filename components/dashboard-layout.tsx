@@ -6,8 +6,8 @@ import { useState, useEffect } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { useAuth } from "@/hooks/use-auth"
-import { useToast } from "@/hooks/use-toast"
+import { useAuth } from "@/lib/hooks/use-auth"
+import { authApi } from "@/lib/api"
 import { Building, FileText, Home, LogOut, Menu, Search, Settings, Shield, User, Users, X } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import {
@@ -24,29 +24,38 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const { user, isAuthenticated, logout } = useAuth()
+  const { isAuthenticated, isLoading } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
-  const { toast } = useToast()
 
   // Check authentication status
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isLoading && !isAuthenticated) {
       router.push("/login")
     }
-  }, [isAuthenticated, router])
+  }, [isAuthenticated, isLoading, router])
 
   const handleLogout = () => {
-    logout()
-    toast({
-      title: "Logged out",
-      description: "You have been successfully logged out",
-    })
+    authApi.logout()
     router.push("/login")
   }
 
   const isActive = (path: string) => {
     return pathname === path || pathname?.startsWith(`${path}/`)
+  }
+
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    )
+  }
+
+  // Don't render anything if not authenticated
+  if (!isAuthenticated) {
+    return null
   }
 
   return (

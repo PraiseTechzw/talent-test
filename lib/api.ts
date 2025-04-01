@@ -26,6 +26,7 @@ const handleResponse = async (response: Response) => {
 // Helper function to dispatch auth state change event
 const dispatchAuthStateChange = () => {
   if (typeof window !== 'undefined') {
+    console.log('Dispatching auth state change event')
     const event = new Event('authStateChanged')
     window.dispatchEvent(event)
   }
@@ -34,6 +35,7 @@ const dispatchAuthStateChange = () => {
 // Authentication API
 export const authApi = {
   login: async (username: string, password: string) => {
+    console.log('Attempting login...')
     const response = await fetch(`${API_BASE_URL}/auth/token/`, {
       method: "POST",
       headers: {
@@ -47,12 +49,14 @@ export const authApi = {
     localStorage.setItem("token", data.access)
     localStorage.setItem("refresh_token", data.refresh)
     
+    console.log('Login successful, tokens stored')
     // Dispatch auth state change event
     dispatchAuthStateChange()
     return data
   },
 
   logout: () => {
+    console.log('Logging out...')
     // Remove both tokens
     localStorage.removeItem("token")
     localStorage.removeItem("refresh_token")
@@ -62,6 +66,7 @@ export const authApi = {
   },
 
   refreshToken: async (refreshToken: string) => {
+    console.log('Refreshing token...')
     const response = await fetch(`${API_BASE_URL}/auth/token/refresh/`, {
       method: "POST",
       headers: {
@@ -74,6 +79,7 @@ export const authApi = {
     // Update the access token
     localStorage.setItem("token", data.access)
     
+    console.log('Token refreshed successfully')
     // Dispatch auth state change event
     dispatchAuthStateChange()
     return data
@@ -94,6 +100,11 @@ const getAuthHeaders = (contentType: string = 'application/json') => {
 
 // Helper function to handle API requests with token refresh
 const handleApiRequest = async (url: string, options: RequestInit = {}) => {
+  const token = getAuthToken()
+  if (!token) {
+    throw new Error("No authentication token found")
+  }
+
   const response = await fetch(url, options)
   
   if (response.status === 401) {

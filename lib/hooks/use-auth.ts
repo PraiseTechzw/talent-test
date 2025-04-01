@@ -10,10 +10,19 @@ export function useAuth() {
         const accessToken = localStorage.getItem('token')
         const refreshToken = localStorage.getItem('refresh_token')
         
+        // Debug logging
+        console.log('Auth check:', {
+          hasAccessToken: !!accessToken,
+          hasRefreshToken: !!refreshToken,
+          accessTokenLength: accessToken?.length,
+          refreshTokenLength: refreshToken?.length
+        })
+        
         // Check if both tokens exist and are not empty strings
         const hasValidTokens = !!accessToken && !!refreshToken && 
           accessToken.trim() !== '' && refreshToken.trim() !== ''
         
+        console.log('Auth state:', { hasValidTokens })
         setIsAuthenticated(hasValidTokens)
       } catch (error) {
         console.error('Error checking auth state:', error)
@@ -27,7 +36,12 @@ export function useAuth() {
     checkAuth()
 
     // Listen for storage changes
-    window.addEventListener('storage', checkAuth)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'token' || e.key === 'refresh_token') {
+        checkAuth()
+      }
+    }
+    window.addEventListener('storage', handleStorageChange)
 
     // Listen for custom auth events
     window.addEventListener('authStateChanged', checkAuth)
@@ -36,7 +50,7 @@ export function useAuth() {
     const intervalId = setInterval(checkAuth, 5 * 60 * 1000)
 
     return () => {
-      window.removeEventListener('storage', checkAuth)
+      window.removeEventListener('storage', handleStorageChange)
       window.removeEventListener('authStateChanged', checkAuth)
       clearInterval(intervalId)
     }
