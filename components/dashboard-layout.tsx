@@ -296,7 +296,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 <DropdownMenuContent align="end" className="w-56">
                   <div className="px-4 py-3">
                     <p className="text-sm">Signed in as</p>
-                    <p className="text-sm font-medium truncate">{user?.username || "User"}</p>
+                    <p className="text-sm font-medium truncate">User</p>
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>

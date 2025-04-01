@@ -20,8 +20,8 @@ export function DashboardMetrics() {
 
   useEffect(() => {
     const fetchMetrics = async () => {
-      if (!isAuthenticated) {
-        setError("Please log in to view metrics")
+      // Don't fetch if still loading or not authenticated
+      if (isLoading || !isAuthenticated) {
         return
       }
 
@@ -43,8 +43,9 @@ export function DashboardMetrics() {
     }
 
     fetchMetrics()
-  }, [isAuthenticated])
+  }, [isAuthenticated, isLoading])
 
+  // Show loading state while checking authentication
   if (isLoading) {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -62,6 +63,25 @@ export function DashboardMetrics() {
     )
   }
 
+  // Show error state if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {[...Array(4)].map((_, i) => (
+          <Card key={i}>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Error</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">Please log in to view metrics</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    )
+  }
+
+  // Show error state if API call failed
   if (error) {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
