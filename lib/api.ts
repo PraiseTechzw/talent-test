@@ -108,7 +108,13 @@ const handleApiRequest = async (url: string, options: RequestInit = {}) => {
     throw new Error("No authentication token found")
   }
 
-  const response = await fetch(url, options)
+  // If the body is FormData, don't modify the headers
+  const isFormData = options.body instanceof FormData
+  const headers = isFormData 
+    ? { ...options.headers, Authorization: `Bearer ${token}` }
+    : { ...getAuthHeaders(), ...options.headers, Authorization: `Bearer ${token}` }
+
+  const response = await fetch(url, { ...options, headers })
   
   if (response.status === 401) {
     // Token might be expired, try to refresh
@@ -121,7 +127,7 @@ const handleApiRequest = async (url: string, options: RequestInit = {}) => {
         const newOptions = {
           ...options,
           headers: {
-            ...options.headers,
+            ...headers,
             Authorization: `Bearer ${data.access}`,
           },
         }
@@ -202,7 +208,6 @@ export const companiesApi = {
     const response = await handleApiRequest(`${API_BASE_URL}/companies/bulk_upload/`, {
       method: "POST",
       headers: {
-        // Don't set Content-Type header, let the browser set it with the boundary
         Authorization: `Bearer ${getAuthToken()}`,
       },
       body: formData,
@@ -268,7 +273,9 @@ export const employeesApi = {
   bulkUpload: async (formData: FormData) => {
     const response = await handleApiRequest(`${API_BASE_URL}/employees/bulk_upload/`, {
       method: "POST",
-      headers: getAuthHeaders('multipart/form-data'),
+      headers: {
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
       body: formData,
     })
     return handleResponse(response)
