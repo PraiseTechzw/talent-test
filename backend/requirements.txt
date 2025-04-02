@@ -1,11 +1,15 @@
-Django==4.2.7
+Django==5.0.2
 djangorestframework==3.14.0
-djangorestframework-simplejwt==5.3.0
-django-cors-headers==4.3.0
-django-filter==23.3
+django-cors-headers==4.3.1
+django-filter==23.5
+django-rest-auth==5.0.0
+django-allauth==0.60.1
 psycopg2-binary==2.9.9
-dj-database-url==2.1.0
-pandas==2.1.1
-openpyxl==3.1.2
+gunicorn==21.2.0
+whitenoise==6.6.0
 python-dotenv==1.0.0
+pandas==2.2.0
+openpyxl==3.1.2
+dj-database-url==2.1.0
+django-heroku==0.3.1
 
