@@ -5,12 +5,11 @@ import { useDropzone } from "react-dropzone"
 import { Button } from "@/components/ui/button"
 import { Loader2, Upload, FileText, X } from "lucide-react"
 import { companiesApi } from "@/lib/api"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 export default function CompanyUpload() {
   const [isUploading, setIsUploading] = useState(false)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const { toast } = useToast()
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
@@ -18,14 +17,10 @@ export default function CompanyUpload() {
       if (file.name.endsWith('.csv') || file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
         setSelectedFile(file)
       } else {
-        toast({
-          title: "Invalid file format",
-          description: "Please upload a CSV or Excel file",
-          variant: "destructive",
-        })
+        toast.error("Please upload a CSV or Excel file")
       }
     }
-  }, [toast])
+  }, [])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -46,17 +41,10 @@ export default function CompanyUpload() {
 
     try {
       await companiesApi.bulkUpload(formData)
-      toast({
-        title: "Success",
-        description: "Companies uploaded successfully",
-      })
+      toast.success("Companies uploaded successfully")
       setSelectedFile(null)
     } catch (err) {
-      toast({
-        title: "Error",
-        description: err instanceof Error ? err.message : "Failed to upload companies",
-        variant: "destructive",
-      })
+      toast.error(err instanceof Error ? err.message : "Failed to upload companies")
     } finally {
       setIsUploading(false)
     }

@@ -15,7 +15,7 @@ import {
 import { Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { employeesApi } from "@/lib/api"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 interface Employee {
   id: string
@@ -41,7 +41,6 @@ export default function EmployeeList({ initialFilters = {} }: EmployeeListProps)
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [filters, setFilters] = useState(initialFilters)
-  const { toast } = useToast()
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -54,34 +53,23 @@ export default function EmployeeList({ initialFilters = {} }: EmployeeListProps)
         setTotalPages(Math.ceil(response.count / 10)) // Assuming 10 items per page
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch employees")
-        toast({
-          title: "Error",
-          description: err instanceof Error ? err.message : "Failed to fetch employees",
-          variant: "destructive",
-        })
+        toast.error(err instanceof Error ? err.message : "Failed to fetch employees")
       } finally {
         setIsLoading(false)
       }
     }
 
     fetchEmployees()
-  }, [currentPage, filters, toast])
+  }, [currentPage, filters])
 
   const handleDelete = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this employee?")) {
       try {
         await employeesApi.delete(id)
         setEmployees(employees.filter((employee) => employee.id !== id))
-        toast({
-          title: "Success",
-          description: "Employee deleted successfully",
-        })
+        toast.success("Employee deleted successfully")
       } catch (err) {
-        toast({
-          title: "Error",
-          description: err instanceof Error ? err.message : "Failed to delete employee",
-          variant: "destructive",
-        })
+        toast.error(err instanceof Error ? err.message : "Failed to delete employee")
       }
     }
   }

@@ -1,3 +1,5 @@
+import { toast } from "sonner"
+
 // Base API URL - would be set from environment variables in production
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api"
 
@@ -18,6 +20,7 @@ const handleResponse = async (response: Response) => {
     } catch (e) {
       errorMessage = `Error: ${response.status} ${response.statusText}`
     }
+    toast.error(errorMessage)
     throw new Error(errorMessage)
   }
   return response.json()

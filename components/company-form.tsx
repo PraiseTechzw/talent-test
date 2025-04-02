@@ -13,6 +13,7 @@ import { X, Loader2 } from "lucide-react"
 import { companiesApi } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 interface CompanyFormProps {
   initialData?: any
@@ -77,26 +78,16 @@ export default function CompanyForm({ initialData, isEdit = false }: CompanyForm
 
       if (isEdit && initialData?.id) {
         await companiesApi.update(initialData.id, companyData)
-        toast({
-          title: "Success",
-          description: "Company updated successfully",
-        })
+        toast.success("Company updated successfully")
       } else {
         await companiesApi.create(companyData)
-        toast({
-          title: "Success",
-          description: "Company created successfully",
-        })
+        toast.success("Company created successfully")
       }
 
       router.push("/companies")
       router.refresh()
     } catch (err) {
-      toast({
-        title: "Error",
-        description: err instanceof Error ? err.message : "Failed to save company",
-        variant: "destructive",
-      })
+      toast.error(err instanceof Error ? err.message : "Failed to save company")
     } finally {
       setIsSubmitting(false)
     }

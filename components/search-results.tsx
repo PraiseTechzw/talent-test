@@ -16,6 +16,7 @@ import { Eye, FileText, Download } from "lucide-react"
 import { searchApi } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/lib/hooks/use-auth"
+import { toast } from "sonner"
 
 interface SearchResult {
   id: string
@@ -47,55 +48,33 @@ interface SearchResultsProps {
 
 export default function SearchResults({ searchParams }: SearchResultsProps) {
   const [results, setResults] = useState<SearchResult[]>([])
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
-  const { toast } = useToast()
   const { isAuthenticated } = useAuth()
 
   useEffect(() => {
     const fetchResults = async () => {
-      // Don't fetch if not authenticated or no search parameters
-      if (!isAuthenticated || Object.values(searchParams).every(value => !value)) {
-        setIsLoading(false)
-        return
-      }
+      if (!isAuthenticated) return
 
       setIsLoading(true)
       setError(null)
 
       try {
-        // Convert search parameters to API format
-        const apiParams: Record<string, string> = {
-          page: currentPage.toString(),
-          ...(searchParams.search_term && { search: searchParams.search_term }),
-          ...(searchParams.company && searchParams.company !== "all" && { company: searchParams.company }),
-          ...(searchParams.department && searchParams.department !== "all" && { department: searchParams.department }),
-          ...(searchParams.position && { position: searchParams.position }),
-          ...(searchParams.start_date && { start_date: searchParams.start_date }),
-          ...(searchParams.end_date && { end_date: searchParams.end_date }),
-          ...(searchParams.active_only && { is_active: "true" }),
-          ...(searchParams.former_only && { is_active: "false" }),
-        }
-
-        const response = await searchApi.search(apiParams)
+        const response = await searchApi.search(searchParams, currentPage)
         setResults(response.results)
-        setTotalPages(Math.ceil(response.count / 10)) // Assuming 10 items per page
+        setTotalPages(Math.ceil(response.count / 10))
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch search results")
-        toast({
-          title: "Error",
-          description: err instanceof Error ? err.message : "Failed to fetch search results",
-          variant: "destructive",
-        })
+        toast.error(err instanceof Error ? err.message : "Failed to fetch search results")
       } finally {
         setIsLoading(false)
       }
     }
 
     fetchResults()
-  }, [currentPage, searchParams, toast, isAuthenticated])
+  }, [currentPage, searchParams, isAuthenticated])
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
@@ -103,24 +82,8 @@ export default function SearchResults({ searchParams }: SearchResultsProps) {
 
   const handleExport = async () => {
     try {
-      toast({
-        title: "Export Started",
-        description: "Your export is being prepared and will download shortly.",
-      })
-
-      // Convert search parameters to API format
-      const apiParams: Record<string, string> = {
-        ...(searchParams.search_term && { search: searchParams.search_term }),
-        ...(searchParams.company && searchParams.company !== "all" && { company: searchParams.company }),
-        ...(searchParams.department && searchParams.department !== "all" && { department: searchParams.department }),
-        ...(searchParams.position && { position: searchParams.position }),
-        ...(searchParams.start_date && { start_date: searchParams.start_date }),
-        ...(searchParams.end_date && { end_date: searchParams.end_date }),
-        ...(searchParams.active_only && { is_active: "true" }),
-        ...(searchParams.former_only && { is_active: "false" }),
-      }
-
-      const response = await searchApi.exportResults(apiParams)
+      toast.loading("Preparing export...")
+      const response = await searchApi.exportResults(searchParams)
       const blob = new Blob([response], { type: 'text/csv' })
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -130,17 +93,9 @@ export default function SearchResults({ searchParams }: SearchResultsProps) {
       a.click()
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
-
-      toast({
-        title: "Export Complete",
-        description: "Your export has been downloaded.",
-      })
+      toast.success("Export completed successfully")
     } catch (err) {
-      toast({
-        title: "Export Failed",
-        description: err instanceof Error ? err.message : "Failed to export results",
-        variant: "destructive",
-      })
+      toast.error(err instanceof Error ? err.message : "Failed to export results")
     }
   }
 

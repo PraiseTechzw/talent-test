@@ -15,7 +15,7 @@ import {
 import { Edit, Eye, MoreHorizontal, Trash2 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { companiesApi } from "@/lib/api"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 interface Company {
   id: string
@@ -41,7 +41,6 @@ export default function CompanyList({ initialFilters = {} }: CompanyListProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [filters, setFilters] = useState(initialFilters)
-  const { toast } = useToast()
 
   useEffect(() => {
     const fetchCompanies = async () => {
@@ -54,34 +53,23 @@ export default function CompanyList({ initialFilters = {} }: CompanyListProps) {
         setTotalPages(Math.ceil(response.count / 10)) // Assuming 10 items per page
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch companies")
-        toast({
-          title: "Error",
-          description: err instanceof Error ? err.message : "Failed to fetch companies",
-          variant: "destructive",
-        })
+        toast.error(err instanceof Error ? err.message : "Failed to fetch companies")
       } finally {
         setIsLoading(false)
       }
     }
 
     fetchCompanies()
-  }, [currentPage, filters, toast])
+  }, [currentPage, filters])
 
   const handleDelete = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this company?")) {
       try {
         await companiesApi.delete(id)
         setCompanies(companies.filter((company) => company.id !== id))
-        toast({
-          title: "Success",
-          description: "Company deleted successfully",
-        })
+        toast.success("Company deleted successfully")
       } catch (err) {
-        toast({
-          title: "Error",
-          description: err instanceof Error ? err.message : "Failed to delete company",
-          variant: "destructive",
-        })
+        toast.error(err instanceof Error ? err.message : "Failed to delete company")
       }
     }
   }
