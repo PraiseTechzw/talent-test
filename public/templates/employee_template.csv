@@ -1,0 +1,5 @@
+name,employee_id,company,department,role,start_date,end_date,duties
+John Doe,EMP12345,Tech Solutions Inc,Engineering,Senior Software Engineer,2023-01-01,,Lead development team, Code review, Technical architecture
+Jane Smith,EMP67890,Tech Solutions Inc,Product,Product Manager,2023-07-01,,Product roadmap, Feature prioritization, User research
+Mike Johnson,EMP54321,Global Finance Corp,Finance,Financial Analyst,2023-10-01,,Financial reporting, Budget analysis, Investment research
+Sarah Williams,EMP09876,Healthcare Systems Ltd,Medical,Medical Director,2023-11-01,,Clinical oversight, Quality assurance, Staff training 
