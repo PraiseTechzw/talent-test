@@ -10,13 +10,23 @@ import { toast } from "sonner"
 export default function CompanyUpload() {
   const [isUploading, setIsUploading] = useState(false)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
       const file = acceptedFiles[0]
+      // Check file size (10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        setError("File size exceeds 10MB limit")
+        toast.error("File size exceeds 10MB limit")
+        return
+      }
+      // Check file type
       if (file.name.endsWith('.csv') || file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
         setSelectedFile(file)
+        setError(null)
       } else {
+        setError("Please upload a CSV or Excel file")
         toast.error("Please upload a CSV or Excel file")
       }
     }
@@ -29,22 +39,26 @@ export default function CompanyUpload() {
       'application/vnd.ms-excel': ['.xls'],
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx']
     },
-    maxFiles: 1
+    maxFiles: 1,
+    maxSize: 10 * 1024 * 1024 // 10MB
   })
 
   const handleUpload = async () => {
     if (!selectedFile) return
 
     setIsUploading(true)
+    setError(null)
     const formData = new FormData()
     formData.append('file', selectedFile)
 
     try {
-      await companiesApi.bulkUpload(formData)
-      toast.success("Companies uploaded successfully")
+      const response = await companiesApi.bulkUpload(formData)
+      toast.success(response.message || "Companies uploaded successfully")
       setSelectedFile(null)
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to upload companies")
+      const errorMessage = err instanceof Error ? err.message : "Failed to upload companies"
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setIsUploading(false)
     }
@@ -52,6 +66,7 @@ export default function CompanyUpload() {
 
   const removeFile = () => {
     setSelectedFile(null)
+    setError(null)
   }
 
   return (
@@ -59,7 +74,8 @@ export default function CompanyUpload() {
       <div
         {...getRootProps()}
         className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors
-          ${isDragActive ? 'border-primary bg-primary/5' : 'border-gray-300 dark:border-gray-700'}`}
+          ${isDragActive ? 'border-primary bg-primary/5' : 'border-gray-300 dark:border-gray-700'}
+          ${error ? 'border-destructive' : ''}`}
       >
         <input {...getInputProps()} />
         {selectedFile ? (
@@ -89,8 +105,11 @@ export default function CompanyUpload() {
               {isDragActive ? "Drop the file here" : "Drop your file here or click to browse"}
             </h3>
             <p className="text-gray-500 dark:text-gray-400 mb-4">
-              Supported formats: CSV, Excel (.xlsx)
+              Supported formats: CSV, Excel (.xlsx, .xls)
             </p>
+            {error && (
+              <p className="text-destructive text-sm mt-2">{error}</p>
+            )}
           </>
         )}
       </div>

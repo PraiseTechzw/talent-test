@@ -1,2 +1,3 @@
-name,registration_number,registration_date,address,contact_person,departments,employee_count,phone,email
-Example Company,REG123456,2024-01-01,123 Business St,John Doe,HR,IT,Finance,100,+1234567890,john@example.com 
+name,registration_date,registration_number,address,contact_person,departments,employee_count,phone,email
+Example Company,2024-01-01,REG123456,123 Business St,John Doe,HR,Finance,IT,50,+1234567890,contact@example.com
+Another Company,2024-02-01,REG789012,456 Corporate Ave,Jane Smith,Sales,Marketing,Operations,30,+0987654321,info@another.com 

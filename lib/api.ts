@@ -201,7 +201,10 @@ export const companiesApi = {
   bulkUpload: async (formData: FormData) => {
     const response = await handleApiRequest(`${API_BASE_URL}/companies/bulk_upload/`, {
       method: "POST",
-      headers: getAuthHeaders('multipart/form-data'),
+      headers: {
+        // Don't set Content-Type header, let the browser set it with the boundary
+        Authorization: `Bearer ${getAuthToken()}`,
+      },
       body: formData,
     })
     return handleResponse(response)
