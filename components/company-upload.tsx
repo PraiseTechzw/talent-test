@@ -138,14 +138,22 @@ export default function CompanyUpload() {
           <li>Department lists should be comma-separated</li>
           <li>Maximum file size: 10MB</li>
         </ul>
-        <div className="mt-4 text-center">
+        <div className="mt-4 text-center space-x-4">
           <a
             href="/templates/company_template.csv"
             download
             className="text-primary hover:underline inline-flex items-center"
           >
             <FileText className="mr-2 h-4 w-4" />
-            Download Template
+            Download CSV Template
+          </a>
+          <a
+            href="/templates/company_template.xlsx"
+            download
+            className="text-primary hover:underline inline-flex items-center"
+          >
+            <FileText className="mr-2 h-4 w-4" />
+            Download Excel Template
           </a>
         </div>
       </div>
