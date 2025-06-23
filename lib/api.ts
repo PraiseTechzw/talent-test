@@ -35,6 +35,22 @@ const dispatchAuthStateChange = () => {
   }
 }
 
+// Add a function to get the current user's profile
+export const userApi = {
+  getCurrentUser: async () => {
+    // Assumes the backend returns the current user's profile as the first result
+    const response = await handleApiRequest(`${API_BASE_URL}/user-profiles/?user__username=current`, {
+      headers: getAuthHeaders(),
+    })
+    const data = await handleResponse(response)
+    // If the backend returns a list, return the first item
+    if (Array.isArray(data.results) && data.results.length > 0) {
+      return data.results[0]
+    }
+    return null
+  },
+}
+
 // Authentication API
 export const authApi = {
   login: async (username: string, password: string) => {
@@ -52,10 +68,19 @@ export const authApi = {
     localStorage.setItem("token", data.access)
     localStorage.setItem("refresh_token", data.refresh)
 
-    // If user info is returned, store it; otherwise, fallback to username only
-    if (data.user) {
-      localStorage.setItem("user", JSON.stringify(data.user))
-    } else {
+    // Try to fetch the full user profile after login
+    try {
+      const userProfile = await userApi.getCurrentUser()
+      if (userProfile) {
+        localStorage.setItem("user", JSON.stringify({
+          username: userProfile.user.username,
+          email: userProfile.user.email,
+          role: userProfile.role,
+        }))
+      } else {
+        localStorage.setItem("user", JSON.stringify({ username }))
+      }
+    } catch (e) {
       localStorage.setItem("user", JSON.stringify({ username }))
     }
     
