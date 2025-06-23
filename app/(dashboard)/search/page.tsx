@@ -14,34 +14,32 @@ import { useToast } from "@/hooks/use-toast"
 import { companiesApi } from "@/lib/api"
 
 interface SearchParams {
-  search_term: string
-  company: string
-  department: string
-  position: string
-  start_date: string
-  end_date: string
-  active_only: boolean
-  former_only: boolean
+  name?: string
+  employee_id?: string
+  company?: string
+  department?: string
+  role?: string
+  start_date_from?: string
+  start_date_to?: string
+  is_active?: boolean
 }
 
 export default function SearchPage() {
-  const [searchParams, setSearchParams] = useState<SearchParams>({
-    search_term: "",
+  const [form, setForm] = useState({
+    name: "",
+    employee_id: "",
     company: "all",
     department: "all",
-    position: "",
-    start_date: "",
-    end_date: "",
-    active_only: false,
-    former_only: false,
+    role: "",
+    start_date_from: "",
+    start_date_to: "",
+    is_active: undefined as boolean | undefined,
   })
   const [companies, setCompanies] = useState<Array<{ id: string; name: string }>>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const { toast } = useToast()
   const [submittedParams, setSubmittedParams] = useState<SearchParams | null>(null)
   const [page, setPage] = useState(1)
+  const { toast } = useToast()
 
-  // Fetch companies for the dropdown
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
@@ -58,11 +56,10 @@ export default function SearchPage() {
     fetchCompanies()
   }, [toast])
 
-  // Handle search form submission
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
-    // Validate search parameters
-    if (!searchParams.search_term && (!searchParams.company || searchParams.company === "all") && (!searchParams.department || searchParams.department === "all") && !searchParams.position) {
+    // Validate at least one field
+    if (!form.name && !form.employee_id && (!form.company || form.company === "all") && (!form.department || form.department === "all") && !form.role) {
       toast({
         title: "Search Error",
         description: "Please enter at least one search criterion",
@@ -71,7 +68,7 @@ export default function SearchPage() {
       return
     }
     // Validate date range
-    if (searchParams.start_date && searchParams.end_date && new Date(searchParams.start_date) > new Date(searchParams.end_date)) {
+    if (form.start_date_from && form.start_date_to && new Date(form.start_date_from) > new Date(form.start_date_to)) {
       toast({
         title: "Search Error",
         description: "Start date cannot be after end date",
@@ -79,16 +76,32 @@ export default function SearchPage() {
       })
       return
     }
-    // Validate employment status
-    if (searchParams.active_only && searchParams.former_only) {
-      toast({
-        title: "Search Error",
-        description: "Cannot select both active and former employees",
-        variant: "destructive",
-      })
-      return
-    }
-    setSubmittedParams({ ...searchParams })
+    // Build params for backend
+    const params: SearchParams = {}
+    if (form.name) params.name = form.name
+    if (form.employee_id) params.employee_id = form.employee_id
+    if (form.company && form.company !== "all") params.company = form.company
+    if (form.department && form.department !== "all") params.department = form.department
+    if (form.role) params.role = form.role
+    if (form.start_date_from) params.start_date_from = form.start_date_from
+    if (form.start_date_to) params.start_date_to = form.start_date_to
+    if (form.is_active !== undefined) params.is_active = form.is_active
+    setSubmittedParams(params)
+    setPage(1)
+  }
+
+  const handleClear = () => {
+    setForm({
+      name: "",
+      employee_id: "",
+      company: "all",
+      department: "all",
+      role: "",
+      start_date_from: "",
+      start_date_to: "",
+      is_active: undefined,
+    })
+    setSubmittedParams(null)
     setPage(1)
   }
 
@@ -102,14 +115,14 @@ export default function SearchPage() {
 
       // Convert search parameters to API format
       const apiParams: Record<string, string> = {
-        ...(searchParams.search_term && { search: searchParams.search_term }),
-        ...(searchParams.company && searchParams.company !== "all" && { company: searchParams.company }),
-        ...(searchParams.department && searchParams.department !== "all" && { department: searchParams.department }),
-        ...(searchParams.position && { position: searchParams.position }),
-        ...(searchParams.start_date && { start_date: searchParams.start_date }),
-        ...(searchParams.end_date && { end_date: searchParams.end_date }),
-        ...(searchParams.active_only && { is_active: "true" }),
-        ...(searchParams.former_only && { is_active: "false" }),
+        ...(submittedParams?.name && { name: submittedParams.name }),
+        ...(submittedParams?.employee_id && { employee_id: submittedParams.employee_id }),
+        ...(submittedParams?.company && submittedParams.company !== "all" && { company: submittedParams.company }),
+        ...(submittedParams?.department && submittedParams.department !== "all" && { department: submittedParams.department }),
+        ...(submittedParams?.role && { role: submittedParams.role }),
+        ...(submittedParams?.start_date_from && { start_date_from: submittedParams.start_date_from }),
+        ...(submittedParams?.start_date_to && { start_date_to: submittedParams.start_date_to }),
+        ...(submittedParams?.is_active !== undefined && { is_active: submittedParams.is_active ? "true" : "false" }),
       }
 
       // Call the export API
@@ -157,125 +170,61 @@ export default function SearchPage() {
           <CardContent>
             <form className="space-y-6" onSubmit={handleSearch}>
               <div className="space-y-2">
-                <Label htmlFor="search-term">Search Term</Label>
-                <div className="relative">
-                  <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                  <Input
-                    id="search-term"
-                    placeholder="Name, ID, position..."
-                    className="pl-10"
-                    value={searchParams.search_term}
-                    onChange={(e) => setSearchParams({ ...searchParams, search_term: e.target.value })}
-                  />
-                </div>
+                <Label htmlFor="name">Name</Label>
+                <Input id="name" placeholder="Name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
               </div>
-
+              <div className="space-y-2">
+                <Label htmlFor="employee_id">Employee ID</Label>
+                <Input id="employee_id" placeholder="Employee ID" value={form.employee_id} onChange={e => setForm({ ...form, employee_id: e.target.value })} />
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="company">Company</Label>
-                <Select
-                  value={searchParams.company}
-                  onValueChange={(value) => setSearchParams({ ...searchParams, company: value })}
-                >
+                <Select value={form.company} onValueChange={value => setForm({ ...form, company: value })}>
                   <SelectTrigger id="company">
                     <SelectValue placeholder="Select company" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Companies</SelectItem>
-                    {companies.map((company) => (
-                      <SelectItem key={company.id} value={company.id}>
-                        {company.name}
-                      </SelectItem>
+                    {companies.map(company => (
+                      <SelectItem key={company.id} value={company.id}>{company.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-
               <div className="space-y-2">
                 <Label htmlFor="department">Department</Label>
-                <Select
-                  value={searchParams.department}
-                  onValueChange={(value) => setSearchParams({ ...searchParams, department: value })}
-                >
+                <Select value={form.department} onValueChange={value => setForm({ ...form, department: value })}>
                   <SelectTrigger id="department">
                     <SelectValue placeholder="Select department" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Departments</SelectItem>
-                    <SelectItem value="engineering">Engineering</SelectItem>
-                    <SelectItem value="hr">Human Resources</SelectItem>
-                    <SelectItem value="sales">Sales</SelectItem>
-                    <SelectItem value="marketing">Marketing</SelectItem>
+                    {/* You can populate department options dynamically if available */}
                   </SelectContent>
                 </Select>
               </div>
-
               <div className="space-y-2">
-                <Label htmlFor="position">Position</Label>
-                <Input
-                  id="position"
-                  placeholder="Job title or position"
-                  value={searchParams.position}
-                  onChange={(e) => setSearchParams({ ...searchParams, position: e.target.value })}
-                />
+                <Label htmlFor="role">Role</Label>
+                <Input id="role" placeholder="Role" value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} />
               </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Start Date</Label>
-                  <DatePicker
-                    date={searchParams.start_date ? new Date(searchParams.start_date) : undefined}
-                    onDateChange={(date) => setSearchParams({ ...searchParams, start_date: date ? date.toISOString() : "" })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>End Date</Label>
-                  <DatePicker
-                    date={searchParams.end_date ? new Date(searchParams.end_date) : undefined}
-                    onDateChange={(date) => setSearchParams({ ...searchParams, end_date: date ? date.toISOString() : "" })}
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="start_date_from">Start Date From</Label>
+                <Input id="start_date_from" type="date" value={form.start_date_from} onChange={e => setForm({ ...form, start_date_from: e.target.value })} />
               </div>
-
-              <div className="space-y-3">
-                <Label>Employment Status</Label>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="active"
-                    checked={searchParams.active_only}
-                    onCheckedChange={(checked) => {
-                      setSearchParams({
-                        ...searchParams,
-                        active_only: checked as boolean,
-                        former_only: checked ? false : searchParams.former_only,
-                      })
-                    }}
-                  />
-                  <Label htmlFor="active" className="text-sm font-normal">
-                    Active Employees
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="former"
-                    checked={searchParams.former_only}
-                    onCheckedChange={(checked) => {
-                      setSearchParams({
-                        ...searchParams,
-                        former_only: checked as boolean,
-                        active_only: checked ? false : searchParams.active_only,
-                      })
-                    }}
-                  />
-                  <Label htmlFor="former" className="text-sm font-normal">
-                    Former Employees
-                  </Label>
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="start_date_to">Start Date To</Label>
+                <Input id="start_date_to" type="date" value={form.start_date_to} onChange={e => setForm({ ...form, start_date_to: e.target.value })} />
               </div>
-
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                <SearchIcon className="mr-2 h-4 w-4" />
-                Search
-              </Button>
+              <div className="flex items-center gap-4">
+                <Checkbox id="active_only" checked={form.is_active === true} onCheckedChange={checked => setForm({ ...form, is_active: checked ? true : undefined })} />
+                <Label htmlFor="active_only">Active Employees Only</Label>
+                <Checkbox id="former_only" checked={form.is_active === false} onCheckedChange={checked => setForm({ ...form, is_active: checked ? false : undefined })} />
+                <Label htmlFor="former_only">Former Employees Only</Label>
+              </div>
+              <div className="flex gap-2">
+                <Button type="submit" className="w-full">Search</Button>
+                <Button type="button" variant="outline" onClick={handleClear}>Clear</Button>
+              </div>
             </form>
           </CardContent>
         </Card>
