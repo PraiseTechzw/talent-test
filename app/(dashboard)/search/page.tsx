@@ -38,6 +38,8 @@ export default function SearchPage() {
   const [companies, setCompanies] = useState<Array<{ id: string; name: string }>>([])
   const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
+  const [submittedParams, setSubmittedParams] = useState<SearchParams | null>(null)
+  const [page, setPage] = useState(1)
 
   // Fetch companies for the dropdown
   useEffect(() => {
@@ -57,41 +59,37 @@ export default function SearchPage() {
   }, [toast])
 
   // Handle search form submission
-  const handleSearch = async () => {
-    setIsLoading(true)
-    try {
-      // Validate search parameters
-      if (!searchParams.search_term && !searchParams.company && !searchParams.department && !searchParams.position) {
-        toast({
-          title: "Search Error",
-          description: "Please enter at least one search criterion",
-          variant: "destructive",
-        })
-        return
-      }
-
-      // Validate date range
-      if (searchParams.start_date && searchParams.end_date && new Date(searchParams.start_date) > new Date(searchParams.end_date)) {
-        toast({
-          title: "Search Error",
-          description: "Start date cannot be after end date",
-          variant: "destructive",
-        })
-        return
-      }
-
-      // Validate employment status
-      if (searchParams.active_only && searchParams.former_only) {
-        toast({
-          title: "Search Error",
-          description: "Cannot select both active and former employees",
-          variant: "destructive",
-        })
-        return
-      }
-    } finally {
-      setIsLoading(false)
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    // Validate search parameters
+    if (!searchParams.search_term && (!searchParams.company || searchParams.company === "all") && (!searchParams.department || searchParams.department === "all") && !searchParams.position) {
+      toast({
+        title: "Search Error",
+        description: "Please enter at least one search criterion",
+        variant: "destructive",
+      })
+      return
     }
+    // Validate date range
+    if (searchParams.start_date && searchParams.end_date && new Date(searchParams.start_date) > new Date(searchParams.end_date)) {
+      toast({
+        title: "Search Error",
+        description: "Start date cannot be after end date",
+        variant: "destructive",
+      })
+      return
+    }
+    // Validate employment status
+    if (searchParams.active_only && searchParams.former_only) {
+      toast({
+        title: "Search Error",
+        description: "Cannot select both active and former employees",
+        variant: "destructive",
+      })
+      return
+    }
+    setSubmittedParams({ ...searchParams })
+    setPage(1)
   }
 
   // Handle export
@@ -157,7 +155,7 @@ export default function SearchPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSearch}>
               <div className="space-y-2">
                 <Label htmlFor="search-term">Search Term</Label>
                 <div className="relative">
@@ -274,10 +272,11 @@ export default function SearchPage() {
                 </div>
               </div>
 
-              <Button className="w-full" onClick={handleSearch} disabled={isLoading}>
-                <SearchIcon className="mr-2 h-4 w-4" /> {isLoading ? "Searching..." : "Search Records"}
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                <SearchIcon className="mr-2 h-4 w-4" />
+                Search
               </Button>
-            </div>
+            </form>
           </CardContent>
         </Card>
 
@@ -291,7 +290,7 @@ export default function SearchPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <SearchResults searchParams={searchParams} />
+            {submittedParams && <SearchResults searchParams={submittedParams} page={page} />}
           </CardContent>
         </Card>
       </div>
