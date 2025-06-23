@@ -291,8 +291,13 @@ export const employeesApi = {
 
 // Search API
 export const searchApi = {
-  search: async (params: Record<string, string>) => {
-    const queryParams = new URLSearchParams(params)
+  search: async (params: Record<string, any>) => {
+    const queryParams = new URLSearchParams()
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        queryParams.append(key, value)
+      }
+    })
     const response = await handleApiRequest(
       `${API_BASE_URL}/search/?${queryParams}`,
       {

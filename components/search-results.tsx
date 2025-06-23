@@ -44,13 +44,14 @@ interface SearchParams {
 
 interface SearchResultsProps {
   searchParams: SearchParams
+  page?: number
 }
 
-export default function SearchResults({ searchParams }: SearchResultsProps) {
+export default function SearchResults({ searchParams, page = 1 }: SearchResultsProps) {
   const [results, setResults] = useState<SearchResult[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState(page)
   const [totalPages, setTotalPages] = useState(1)
   const { isAuthenticated } = useAuth()
 
@@ -62,7 +63,7 @@ export default function SearchResults({ searchParams }: SearchResultsProps) {
       setError(null)
 
       try {
-        const response = await searchApi.search(searchParams, currentPage)
+        const response = await searchApi.search({ ...searchParams, page: currentPage })
         setResults(response.results)
         setTotalPages(Math.ceil(response.count / 10))
       } catch (err) {
