@@ -51,6 +51,13 @@ export const authApi = {
     // Store both access and refresh tokens
     localStorage.setItem("token", data.access)
     localStorage.setItem("refresh_token", data.refresh)
+
+    // If user info is returned, store it; otherwise, fallback to username only
+    if (data.user) {
+      localStorage.setItem("user", JSON.stringify(data.user))
+    } else {
+      localStorage.setItem("user", JSON.stringify({ username }))
+    }
     
     console.log('Login successful, tokens stored')
     // Dispatch auth state change event
