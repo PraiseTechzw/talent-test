@@ -8,7 +8,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/lib/hooks/use-auth"
 import { authApi } from "@/lib/api"
-import { Building, FileText, Home, LogOut, Menu, Search, Settings, Shield, User, Users, X } from "lucide-react"
+import { Building, FileText, Home, LogOut, Menu, Search, Settings, Shield, User, Users, X, Mail, User as UserIcon, Shield as RoleIcon } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import {
   DropdownMenu,
@@ -271,6 +271,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                <div className="px-4 py-3 border-b border-muted-foreground/20">
+                  <div className="font-semibold text-base flex items-center gap-2"><UserIcon className="h-4 w-4" /> {user?.username}</div>
+                  {user?.email && <div className="text-xs text-muted-foreground flex items-center gap-1 mt-1"><Mail className="h-3 w-3" /> {user.email}</div>}
+                  {user?.role && <div className="text-xs text-muted-foreground flex items-center gap-1 mt-1"><RoleIcon className="h-3 w-3" /> {user.role}</div>}
+                </div>
                 <DropdownMenuItem onClick={() => router.push("/settings")}>Settings</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="text-destructive">
